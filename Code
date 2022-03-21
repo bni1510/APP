@@ -1,0 +1,479 @@
+var ball;        //Variabel für den ball
+var ska;        //Variabel für die Skalierung von verschiedenen Bildschirmen
+var ballGeschwindigkeit = 1.0001;
+var linkesBrett;
+var rechtesBrett;
+var brettbreite = 4;
+var rechtePunkte=0;
+var linkePunkte =0;
+var rechtslinks;
+var obenunten;
+var xrich = 2;
+var knopf;
+var knopf2;
+var knopf3;
+var knopf4;
+var knopf5;
+var Spieler1;
+var Spieler2;
+var timer  ;
+var modus ;
+var intervalID;
+
+
+function setup() {     //function setup wird einmal ausgeführt wenn der Browser geladen wird
+  
+  
+  var cnv= createCanvas(windowHeight , windowHeight);
+  cnv.position(windowWidth/2-(windowHeight/2),0)
+  ska = height/20;
+  bestimmeRichtung();
+  ball = new Ball();
+  intervalID = setInterval(zähleZeit, 1000);
+  createButtons();
+  noLoop();
+  
+  
+  
+}
+
+function draw() {    //function draw wird immer wieder ausgeführt im unendlichen loop
+  
+  background(42);
+  GameOverAll();
+  Zeitabfrage();
+  Mittellinie();
+  ball.display();
+  ball.move();
+  ball.hit();
+  ball.xspeed =ball.xspeed *ballGeschwindigkeit;   // Der Ball wird immer schneller auf der x Achse
+  ball.yspeed =ball.yspeed *ballGeschwindigkeit;   // Der Ball wird immer schneller auf der y Achse
+  linkesBrett.display();
+  linkesBrett.move();
+  rechtesBrett.display();
+  rechtesBrett.move();
+  tastendruck();
+  textSize(ska);
+  textAlign(CENTER);
+  text(rechtePunkte, width*0.75, height/10);
+  text(linkePunkte, width*0.25, height/10);
+  
+ 
+  
+  
+  
+}
+
+function Ball () {
+  
+  this.xposition = width/2;
+  this.yposition = height/2;
+  this.xspeed = xrich;
+  this.yspeed = yrich;
+  this.display = function() {
+  noStroke();          // keine umrandung beim Kreis
+  ellipse(this.xposition, this.yposition, ska, ska);      //Funktion um Kreis abzubilden
+   
+    
+  }
+  
+this.move = function() {
+    
+  this.xposition += this.xspeed;        //+= gleiche Bedeutung wie this.x+scl
+  this.yposition += this.yspeed;
+ }
+  
+this.hit = function() {
+  
+  if (this.xposition > width-ska && this.yposition > rechtesBrett.yposition -ska/4 && this.yposition 
+      < rechtesBrett.yposition+rechtesBrett.height + ska/4 ) {    
+      //Ball wird  nur bei Berührung des Brettes abgeprallt (rechte Seite)
+      this.xspeed = -ska/6;   //x wert wird invetiert damit der ball von links nach rechts gehen kann
+      
+    }
+    
+  if  (this.xposition  < ska && this.yposition > linkesBrett.yposition -ska/4 && this.yposition 
+      < linkesBrett.yposition+linkesBrett.height +ska/4) { 
+      //Ball wird  nur bei Berührung des Brettes abgeprallt (linke Seite)
+      this.xspeed = ska/6;        
+      
+    }
+    
+  if  (this.xposition  < -ska || this.xposition > width + ska) { 
+      this.xspeed = 0;
+      Punktetafel();
+      this.yposition = -ska;
+    bestimmeRichtung();
+    ball = new Ball();
+    
+    
+    
+      
+      
+      
+    }
+    
+  
+    
+  if (this.yposition > height-ska/2 || this.yposition < ska/2) {      
+       // wenn y grösser als die breite des Fensters - Durchmesser/2
+       this.yspeed = -this.yspeed; 
+       //y wert wird invetiert damit der ball von links nach rechts gehen kann
+      
+    }
+  }
+      
+  }
+
+function Brett (x){
+  
+  this.xposition = x;
+  this.yposition = height/2
+  this.width = ska/2;
+  this.ydirection = 0;
+  this.height = this.width * brettbreite;  //Die höche des Brettes soll 4 mal grösser sein als die breite                                                    
+  
+  
+  this.display = function() {
+    
+    fill(255);     //Farbe des Bretts, muss umbedingt vor dem Rechteck definiert werden
+    noStroke();    //keine umrandung
+    rectMode(CORNER);
+    rect(this.xposition, this.yposition, this.width, this.height)  
+         //rect abkürzung im p5 für Rechteck
+  }
+  
+ this.move = function() {
+   
+    this.yposition += this.ydirection;
+   
+   
+ }
+   }
+
+function tastendruck() {
+  
+  if (keyIsDown(UP_ARROW)) {  
+      //Wenn die Pfeil Taste nach oben gedrückt wird soll sich  das Brett nach oben bewegen.             
+      rechtesBrett.ydirection = -ska/4; 
+  } else if (keyIsDown(DOWN_ARROW)) {        
+    //Wenn die Pfeil Taste nach oben gedrückt wird soll sich das Brett nach unten bewegen.                                    
+    rechtesBrett.ydirection = ska/4;
+}    else {
+     rechtesBrett.ydirection = 0;     
+     //Wenn weder die erste noch die zweite Taste gedrückt wird  sollte die position wieder auf          null zurückgesetzt werden.                                                 
+}
+  
+  if (keyIsDown(87)) {    //Wenn die Taste W  gedrückt wird soll sich das Brett nach oben bewegen.                                                                    
+   linkesBrett.ydirection = -ska/4; 
+}  else if (keyIsDown(83)) {                //Wenn die Taste S gedrückt wird soll sich 
+                                           // das Brett nach unten bewegen
+    linkesBrett.ydirection = ska/4;
+}    else {
+      linkesBrett.ydirection = 0;  //Wenn weder die erste noch die zweite Taste gedrückt wird                                          sollte die position wieder auf null zurückgesetzt werden.
+} 
+  
+}
+
+function nameSpieler1() {
+  
+  Spieler1 = prompt("Game Over Spieler 1 gewinnt, bitte deinen Namen eingeben ");
+  return Spieler1;
+ 
+  
+}
+
+function nameSpieler2() {
+  
+  Spieler2 = prompt ("Game Over Spieler 2 gewinnt, bitte deinen Namen eingeben");
+  return Spieler2;
+ 
+  
+}
+
+
+  
+  function Punktetafel () {
+  
+  if (ball.yposition > 0 && ball.xposition > width/2) {
+      linkePunkte++; 
+      }
+  
+  if (ball.yposition > 0 && ball.xposition < width/2) {
+      rechtePunkte++; 
+      }
+  
+}
+
+
+function Mittellinie() {
+  
+  fill(255);         //weisse Farbe setzten
+  noStroke();
+  rectMode(CENTER);  // Modus geändert damit die Mitte richtig eingestellt ist
+  for (var i= 0; i < height/ska; i++) {
+  rect (width/2, i*ska*1.5, ska/4, ska); 
+  }
+  
+}
+
+function GameOverAll() {
+
+  switch (modus){
+    case 1: GameOver();
+    break;
+    case 2: GameOver();
+    break;
+    case 3: GameOver();
+    break;
+    case 4: GameOver2();
+    break;
+  }
+  
+} 
+
+function GameOver() {
+  
+  textSize (ska*2);
+  stroke(42);
+  strokeWeight(ska/2);      // Dicke des Rahmens bestimmen
+  if(linkePunkte == 5) {
+    nameSpieler1();
+    console.log(Spieler1 +" gewinnt das Spiel");
+    noLoop();
+  } else if (rechtePunkte == 5) {
+      nameSpieler2();
+    console.log(Spieler2  + " gewinnt das Spiel");
+    noLoop();
+  }  
+
+  
+}
+
+
+function GameOver2() {
+  
+  textSize (ska*2);
+  stroke(42);
+  strokeWeight(ska/2);      // Dicke des Rahmens bestimmen
+  if(timer == 0 && rechtePunkte < linkePunkte) {
+    nameSpieler1();
+    console.log(Spieler1 +" gewinnt das Spiel");
+    noLoop();
+  } else if (timer == 0 && linkePunkte < rechtePunkte) {
+      nameSpieler2();
+    console.log(Spieler2  + " gewinnt das Spiel");
+    noLoop();
+  }  
+
+  
+}
+
+
+function lösche() {
+  rechtePunkte = 0;
+  linkePunkte = 0;
+  clearInterval(intervalID);
+  GameOverAll();
+  createButtons();
+  deleteButtons();
+  setup();
+  noLoop();
+  loop();
+  noLoop();
+  
+}
+
+function bestimmeRichtung() {
+  
+  rechtslinks = floor(random(0,1.999));
+  if (rechtslinks==0) {
+      xrich =random(ska/6, ska/10);
+  }    else {
+        xrich =-random(ska/6, ska/10);
+  }
+  
+  
+    obenunten = floor(random(0,1.999));
+    if (obenunten==0) {
+        yrich = random(ska/15, ska/25);
+  }      else {
+          yrich =-random(ska/15, ska/25);
+  }
+  
+}
+
+function farbwechsel(){
+  
+  knopf.style ("color", "green");
+}
+
+function farbreseten(){
+  
+  knopf.style ("color", "white");
+}
+
+function button() {
+  
+  knopf = createButton("Restart")
+  knopf.position(windowWidth/2-ska*1.8, height/20);
+  knopf.mousePressed(lösche);
+  knopf.style ("font-size", ska+"px");
+  knopf.style ("color", "white");
+  knopf.style ("background-color", "#2A2A2A");
+  knopf.mouseOver(farbwechsel);
+  knopf.mouseOut(farbreseten);
+}
+
+function createButtons(){
+    knopf = createButton("Restart")
+  knopf.position(windowWidth/2-ska*1.8, height/20);
+  knopf.mousePressed(lösche);
+  knopf.style ("font-size", ska+"px");
+  knopf.style ("color", "white");
+  knopf.style ("background-color", "#2A2A2A");
+  knopf.mouseOver(farbwechsel);
+  knopf.mouseOut(farbreseten);
+  
+    knopf2 = createButton("Schneller Ball")
+  knopf2.position(windowWidth/2-ska*8, height/2);
+  knopf2.mousePressed(startschnellerBall);
+  knopf2.style ("font-size", ska+"px");
+  knopf2.style ("color", "yellow");
+  knopf2.style ("background-color", "#2A2A2A");
+  
+  
+    knopf3 = createButton("Kleines Brett")
+  knopf3.position(windowWidth/2-ska*8, height/5);
+  knopf3.mousePressed(StartkleinesBrett);
+  knopf3.style ("font-size", ska+"px");
+  knopf3.style ("color", "blue");
+  knopf3.style ("background-color", "#2A2A2A");
+ 
+  
+    knopf4 = createButton("Klassisch")
+  knopf4.position(windowWidth/2-ska*8, height/3);
+  knopf4.mousePressed(Klassisch);
+  knopf4.style ("font-size", ska+"px");
+  knopf4.style ("color", "white");
+  knopf4.style ("background-color", "#2A2A2A");
+  
+  
+  
+      knopf5 = createButton("Zeitball")
+  knopf5.position(windowWidth/2-ska*8, height/1.5);
+  knopf5.mousePressed(Zeitmodus);
+  knopf5.style ("font-size", ska+"px");
+  knopf5.style ("color", "red");
+  knopf5.style ("background-color", "#2A2A2A");
+  
+  
+}
+
+function deleteButtons(){
+  knopf2.remove();
+  knopf3.remove();
+  knopf4.remove();
+  knopf5.remove();
+  
+}
+
+function startschnellerBall(){
+  
+  audio("Modus Schneller Ball", "de-DE");
+  deleteButtons();
+  ballGeschwindigkeit = 1.01;
+  brettbreite = 4;
+  linkesBrett = new Brett (0);      //gebe der Variabel den x Wert 0 mit
+  rechtesBrett = new Brett (width-ska/2);    
+  modus = 3;
+  button();
+  loop();
+  
+  
+  
+}
+
+function StartkleinesBrett(){
+  
+  audio("Modus kleines Brett", "de-DE");
+  deleteButtons();
+  ballGeschwindigkeit = 1.0001;
+  brettbreite = 2;
+  linkesBrett = new Brett (0);      //gebe der Variabel den x Wert 0 mit
+  rechtesBrett = new Brett (width-ska/2);    
+  modus = 1;
+  button();
+  loop();
+  
+  
+  
+}
+
+function Klassisch(){
+  
+  audio("Modus Klassisch", "de-DE");
+  deleteButtons();
+  ballGeschwindigkeit = 1.0001;
+  brettbreite = 4;
+  linkesBrett = new Brett (0);      //gebe der Variabel den x Wert 0 mit
+  rechtesBrett = new Brett (width-ska/2);    
+  modus = 2;
+  button();
+  loop();
+  
+  
+  
+}
+
+function Zeitmodus(){
+  
+  audio("Modus Zeitball", "de-DE");
+  deleteButtons();
+  ballGeschwindigkeit = 1.0001;
+  brettbreite = 4;
+  linkesBrett = new Brett (0);      //gebe der Variabel den x Wert 0 mit
+  rechtesBrett = new Brett (width-ska/2);    
+  timer= 5;
+  modus = 4;
+  button();
+  loop();
+  
+
+}
+function zähleZeit() {
+  if (timer > 0) {
+    timer--;
+  }
+  
+}
+
+function Zeitabfrage() {
+  
+  if (timer >= 10) {
+    text("0:" + timer, width / 2, height / 2);
+  }
+  if (timer < 10) {
+    
+    text('0:0' + timer, width / 2, height / 2);
+  }
+  if (timer == 0) {
+    text('', width / 2, height / 2);
+  }
+  
+
+}
+
+  function audio(x, y){
+        let msg = new SpeechSynthesisUtterance();
+        msg.text = x;
+        msg.lang = y;
+
+        let voices = window.speechSynthesis.getVoices();
+        msg.voice = voices.filter(function(voice) { return voice.lang == y; })[0];
+
+        speechSynthesis.speak(msg);  
+    }
+  
+  
+
