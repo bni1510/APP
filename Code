@@ -14,16 +14,22 @@ var knopf2;
 var knopf3;
 var knopf4;
 var knopf5;
-var Spieler1;
-var Spieler2;
+var Spieler1 = null;
+var Spieler2 = null;
 var timer  ;
 var modus ;
 var intervalID;
+var table;
 
 
-function setup() {     //function setup wird einmal ausgeführt wenn der Browser geladen wird
+function preload() {
   
+  table = loadTable('podest.csv', 'csv', 'header');
   
+}
+
+function setup() {     
+  //function setup wird einmal ausgeführt wenn der Browser geladen wird
   var cnv= createCanvas(windowHeight , windowHeight);
   cnv.position(windowWidth/2-(windowHeight/2),0)
   ska = height/20;
@@ -32,13 +38,11 @@ function setup() {     //function setup wird einmal ausgeführt wenn der Browser
   intervalID = setInterval(zähleZeit, 1000);
   createButtons();
   noLoop();
-  
-  
-  
+    
 }
 
-function draw() {    //function draw wird immer wieder ausgeführt im unendlichen loop
-  
+function draw() {    
+  //function draw wird immer wieder ausgeführt im unendlichen loop
   background(42);
   GameOverAll();
   Zeitanzeige();
@@ -46,8 +50,10 @@ function draw() {    //function draw wird immer wieder ausgeführt im unendliche
   ball.display();
   ball.move();
   ball.hit();
-  ball.xspeed =ball.xspeed *ballGeschwindigkeit;   // Der Ball wird immer schneller auf der x Achse
-  ball.yspeed =ball.yspeed *ballGeschwindigkeit;   // Der Ball wird immer schneller auf der y Achse
+  ball.xspeed =ball.xspeed *ballGeschwindigkeit;   
+  // Der Ball wird immer schneller auf der x Achse
+  ball.yspeed =ball.yspeed *ballGeschwindigkeit;   
+  // Der Ball wird immer schneller auf der y Achse
   if  (!linkesBrett) {
     return null
   }
@@ -60,10 +66,7 @@ function draw() {    //function draw wird immer wieder ausgeführt im unendliche
   textAlign(CENTER);
   text(rechtePunkte, width*0.75, height/10);
   text(linkePunkte, width*0.25, height/10);
-  
- 
-  
-  
+   
   
 }
 
@@ -91,14 +94,15 @@ this.hit = function() {
   if (this.xposition > width-ska && this.yposition > rechtesBrett.yposition -ska/4 && this.yposition 
       < rechtesBrett.yposition+rechtesBrett.height + ska/4 ) {    
       //Ball wird  nur bei Berührung des Brettes abgeprallt (rechte Seite)
-      this.xspeed = -ska/6;   //x wert wird invetiert damit der ball von links nach rechts gehen kann
+      this.xspeed = -ska/6;   
+      //x wert wird invetiert damit der ball von links nach rechts gehen kann.
       
     }
     
-  if  (this.xposition  < ska && this.yposition > linkesBrett.yposition -ska/4 && this.yposition 
-      < linkesBrett.yposition+linkesBrett.height +ska/4) { 
+  if  (this.xposition  < ska && this.yposition > linkesBrett.yposition -ska/4 && this.yposition < linkesBrett.yposition+linkesBrett.height +ska/4) { 
       //Ball wird  nur bei Berührung des Brettes abgeprallt (linke Seite)
-      this.xspeed = ska/6;    //x wert wird invetiert damit der ball von rechts nach links gehen kann       
+      this.xspeed = ska/6;    
+      //x wert wird invetiert damit der ball von rechts nach links gehen kann.      
       
     }
     
@@ -108,15 +112,10 @@ this.hit = function() {
       this.yposition = -ska;
       bestimmeRichtung();
       ball = new Ball();
-    
-    
-    
-      
-      
+        
       
     }
     
-  
     
   if (this.yposition > height-ska/2 || this.yposition < ska/2) {      
       // wenn y grösser als die breite des Fensters - Durchmesser/2
@@ -134,19 +133,22 @@ function Brett (x){
   this.yposition = height/2
   this.width = ska/2;
   this.ydirection = 0;
-  this.height = this.width * brettbreite; //Die höche des Brettes soll 4 mal grösser sein als die breite                                                    
+  this.height = this.width * brettbreite; 
+  //Die höche des Brettes soll 4 mal grösser sein als die breite.                                                    
   
   
- this.display = function() {
+this.display = function() {
     
-  fill(255);     //Farbe des Bretts, muss umbedingt vor dem Rechteck definiert werden
-  noStroke();    //keine umrandung
+  fill(255);     
+  //Farbe des Bretts, muss umbedingt vor dem Rechteck definiert werden
+  noStroke();    
+  //keine umrandung
   rectMode(CORNER);
   rect(this.xposition, this.yposition, this.width, this.height)  
-                 //rect abkürzung im p5 für Rechteck
+  //rect abkürzung im p5 für Rechteck
   }
   
- this.move = function() {
+this.move = function() {
    
   this.yposition += this.ydirection;
    
@@ -164,16 +166,19 @@ function tastendruck() {
         rechtesBrett.ydirection = ska/4;
      } else {
            rechtesBrett.ydirection = 0;     
-           //Wenn weder die erste noch die zweite Taste gedrückt wird  sollte die position wieder auf                null zurückgesetzt werden.                                                 
+           //Wenn weder die erste noch die zweite Taste gedrückt wird  sollte die position wieder auf null zurückgesetzt werden.                                                 
 }
   
-  if (keyIsDown(87)) {    //Wenn die Taste W  gedrückt wird soll sich das Brett nach oben bewegen.                                                                    
+  if (keyIsDown(87)) {    
+    //Wenn die Taste W  gedrückt wird soll sich das Brett nach oben bewegen.                                                                    
    linkesBrett.ydirection = -ska/4; 
-   } else if (keyIsDown(83)) {                //Wenn die Taste S gedrückt wird soll sich 
-                                           // das Brett nach unten bewegen
+   } 
+  else if (keyIsDown(83)) {                
+     //Wenn die Taste S gedrückt wird soll sich das Brett nach unten bewegen.
         linkesBrett.ydirection = ska/4;
       } else {
-         linkesBrett.ydirection = 0;  //Wenn weder die erste noch die zweite Taste gedrückt wird                                                sollte die position wieder auf null zurückgesetzt werden.
+         linkesBrett.ydirection = 0;  
+        //Wenn weder die erste noch die zweite Taste gedrückt wird sollte die position wieder auf null zurückgesetzt werden.
 } 
   
 }
@@ -193,7 +198,6 @@ function nameSpieler2() {
  
   
 }
-
 
   
   function Punktetafel () {
@@ -222,7 +226,7 @@ function Mittellinie() {
 
 function GameOverAll() {
 
-  switch (modus){
+    switch (modus){
     case 1: GameOver();
     break;
     case 2: GameOver();
@@ -241,35 +245,110 @@ function GameOver() {
   if(linkePunkte == 5) {
     nameSpieler1();
     console.log(Spieler1 +" gewinnt das Spiel");
+    RanglisteAnpassen();
     noLoop();
   } else if (rechtePunkte == 5) {
-      nameSpieler2();
+    nameSpieler2();
     console.log(Spieler2  + " gewinnt das Spiel");
+    RanglisteAnpassen();
     noLoop();
   }  
-
   
 }
-
+   
+function RanglisteAnpassen() {
+  
+  let  istSpielerGefunden = false;
+  
+  for (let r = 0; r < table.getRowCount(); r++){ 
+    if (table.getString(r, "Spieler").toString() == (Spieler1) ){
+      
+      table.set(r, "Siege", int(table.get(r, "Siege"))+1);
+      saveTable(table, 'podest1.csv', "csv");
+      istSpielerGefunden = true;
+      noLoop();
+      // Wenn der Name von Spieler 1 bereits exisiert in der Spalte "Spieler" im CSV dan rechne dem Spieler + 1 hinzu und lade das neue CSV herunter.
+        
+       
+    }
+    
+    else if(table.getString(r, "Spieler").toString() == (Spieler2)){
+      table.set(r, "Siege", int(table.get(r, "Siege"))+1);
+      saveTable(table, 'podest1.csv', "csv");
+      istSpielerGefunden = true;
+      noLoop();
+      // Wenn der Name von Spieler 2 bereits exisiert in der Spalte "Spieler" im CSV dan rechne dem Spieler + 1 hinzu und lade das neue CSV herunter.     
+      
+      
+    }    
+  
+  }
+  
+  if(istSpielerGefunden == false){
+     
+      
+  if(Spieler1 !== null){
+     let newRow = table.addRow();
+     newRow.setString('Spieler', Spieler1);
+     newRow.setString('Siege', 1);
+     save(table, 'Rangliste.csv');
+     noLoop();
+     //Wenn Spieler 1 ungleich null dann adde eine Row und füll die Tabelle bei Spalte Spieler mit Spieler 1 und gib Spieler 1 einen Sieg in Spalte Sieg. 
+      
+        
+      }
+      
+   else if(Spieler2 !== null){
+      let newRow = table.addRow();
+      newRow.setString('Spieler', Spieler2);
+      newRow.setString('Siege', 1);
+      save(table, 'Rangliste.csv');
+      noLoop();
+        //Wenn Spieler 2 ungleich null dann adde eine Row und füll die Tabelle bei Spalte Spieler mit Spieler 2 und gib Spieler 1 einen Sieg in Spalte Sieg.
+      
+     
+      }
+  
+  }
+  
+}
 
 function GameOver2() {
   
   textSize (ska*2);
   stroke(42);
-  strokeWeight(ska/2);      // Dicke des Rahmens bestimmen
+  strokeWeight(ska/2);      
+  // Dicke des Rahmens bestimmen
   if(timer == 0 && rechtePunkte < linkePunkte) {
     nameSpieler1();
     console.log(Spieler1 +" gewinnt das Spiel");
+    RanglisteAnpassen();
     noLoop();
   } else if (timer == 0 && linkePunkte < rechtePunkte) {
       nameSpieler2();
       console.log(Spieler2  + " gewinnt das Spiel");
+    RanglisteAnpassen();
       noLoop();
   }  
 
   
 }
 
+function restartSpiel() {
+
+    switch (restart) {
+    case 1: lösche();
+    break;
+    case 2: lösche();
+    break;
+    case 3: lösche();
+    break;
+    case 4: lösche1();
+    break;
+    
+  }
+  
+}
 
 function lösche() {
   rechtePunkte = 0;
@@ -277,6 +356,19 @@ function lösche() {
   clearInterval(intervalID);
   GameOverAll();
   timer=0;
+  Zeitanzeige();
+  setup();
+  loop();
+  deleteButtons();
+  
+}
+
+function lösche1() {
+  rechtePunkte = 0;
+  linkePunkte = 0;
+  clearInterval(intervalID);
+  GameOverAll();
+  timer=90;
   Zeitanzeige();
   setup();
   loop();
@@ -296,26 +388,29 @@ function startmenu() {
   Zeitanzeige();
   setup();
   noLoop();
-  loop();
-  noLoop();
+  background(42);
+  Mittellinie();
   
 }
 
 function bestimmeRichtung() {
   
   rechtslinks = floor(random(0,1.999));
+  //zufällige Zahl zwischen 0 und 1.999, Funktion floor() rundet eine Zahl ab und gibt einen   ganzzahligen Wert zurück.
   if (rechtslinks==0) {
       xrich =random(ska/6, ska/10);
    } else {
         xrich =-random(ska/6, ska/10);
   }
+     //wenn rechtlinks== 0 dann gehe nach rechts sonst nach links
   
   
-    obenunten = floor(random(0,1.999));
-    if (obenunten==0) {
+  obenunten = floor(random(0,1.999));
+  if (obenunten==0) {
         yrich = random(ska/15, ska/25);
-     } else {
+    } else {
           yrich =-random(ska/15, ska/25);
+      //wenn rechtlinks== 0 dann gehe nach unten sonst nach oben
   }
   
 }
@@ -334,7 +429,7 @@ function button() {
   
   knopf = createButton("Restart")
   knopf.position(windowWidth/2-ska*1.8, height/10);
-  knopf.mousePressed(lösche);
+  knopf.mousePressed(restartSpiel);
   knopf.style ("font-size", 20+"px");
   knopf.style ("color", "white");
   knopf.style ("background-color", "#2A2A2A");
@@ -345,7 +440,7 @@ function button() {
 function createButtons(){
   knopf = createButton("Restart")
   knopf.position(windowWidth/2-ska*1.8, height/10);
-  knopf.mousePressed(lösche);
+  knopf.mousePressed(restartSpiel);
   knopf.style ("font-size", 20+"px");
   knopf.style ("color", "white");
   knopf.style ("background-color", "#2A2A2A");
@@ -398,6 +493,12 @@ function createButtons(){
   knopf7.style ("color", "white");
   knopf7.style ("background-color", "#2A2A2A");
   
+  knopf8 = createButton("Rangliste")
+  knopf8.position(windowWidth/2-ska*-6, height/5);
+  knopf8.mousePressed(Rangliste);
+  knopf8.style ("font-size", 15+"px");
+  knopf8.style ("color", "pink");
+  knopf8.style ("background-color", "#2A2A2A"); 
   
 }
 
@@ -407,7 +508,19 @@ function deleteButtons(){
   knopf4.remove();
   knopf5.remove();
   knopf6.remove();
+  knopf8.remove();
   
+}
+
+function deleteAllButtons() {
+  
+  knopf.remove();
+  knopf2.remove();
+  knopf3.remove();
+  knopf4.remove();
+  knopf5.remove();
+  knopf6.remove();
+  knopf8.remove();
 }
 
 function startschnellerBall(){
@@ -419,10 +532,8 @@ function startschnellerBall(){
   linkesBrett = new Brett (0);      //gebe der Variabel den x Wert 0 mit
   rechtesBrett = new Brett (width-ska/2);    
   modus = 3;
-  button();
+  restart= 3;
   loop();
-  
-  
   
 }
 
@@ -435,10 +546,8 @@ function startkleinesBrett(){
   linkesBrett = new Brett (0);      //gebe der Variabel den x Wert 0 mit
   rechtesBrett = new Brett (width-ska/2);    
   modus = 1;
-  button();
-  loop();
-  
-  
+  restart = 1;
+  loop(); 
   
 }
 
@@ -451,11 +560,8 @@ function startKlassisch(){
   linkesBrett = new Brett (0);      //gebe der Variabel den x Wert 0 mit
   rechtesBrett = new Brett (width-ska/2);    
   modus = 2;
-  button();
-
-  loop();
-  
-  
+  restart =1;
+  loop();  
   
 }
 
@@ -467,13 +573,13 @@ function startZeitmodus(){
   brettbreite = 4;
   linkesBrett = new Brett (0);      //gebe der Variabel den x Wert 0 mit
   rechtesBrett = new Brett (width-ska/2);    
-  timer= 90;
+  timer= 10;
   modus = 4;
-  button();
-  loop();
-  
+  restart = 4;
+  loop(); 
 
 }
+
 function zähleZeit() {
   
   if (timer > 0) {
@@ -495,8 +601,6 @@ function Zeitanzeige() {
     text('0:0' + timer, width / 2, height / 2);
   }
   
-  
-
 }
 
 function audio(x, y){
@@ -516,3 +620,19 @@ function öffneAnleitung(){
   
 }
 
+function Rangliste () {
+  
+  textSize(ska);
+  textAlign(CENTER);
+  text("Siege", width*0.75, height/5);
+  text("Spieler", width*0.25, height/5);
+  textSize(20);
+  for (let r = 0; r < table.getRowCount(); r++){
+  //Hier braucht es auch eine For Laufe damit die Rangliste aktualisiert und richtig angezigt werden kann.
+      text(table.getString(r, "Spieler"), width*0.25, 250+r*50);
+      text(table.getString(r, "Siege"), width*0.75, 250+r*50);
+  }
+  
+  deleteAllButtons();
+  
+}
