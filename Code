@@ -573,7 +573,7 @@ function startZeitmodus(){
   brettbreite = 4;
   linkesBrett = new Brett (0);      //gebe der Variabel den x Wert 0 mit
   rechtesBrett = new Brett (width-ska/2);    
-  timer= 10;
+  timer= 90;
   modus = 4;
   restart = 4;
   loop(); 
